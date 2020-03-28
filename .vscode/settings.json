@@ -1,5 +1,13 @@
 {
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true
+    "python.linting.enabled": true,
+    "sqltools.connections": [
+        {
+            "database": "${workspaceFolder}\\db/sample.db",
+            "dialect": "SQLite",
+            "name": "localtest"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
 }
