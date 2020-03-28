@@ -7,4 +7,4 @@
 ## 実行環境
 - Flask
 - line-bot-sdk
-- SQL 
+- SQL Alchemy
