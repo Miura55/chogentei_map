@@ -56,6 +56,28 @@ class BeaconLog(db.Model):
         self.event_type = data["event_type"]
 
 
+class FacilityStream(db.Model):
+    __tablename__ = "FacilityStream"
+    id = db.Column(db.Integer, primary_key=True)
+    facility_id = db.Column(db.Integer, nullable=False)
+    area_id = db.Column(db.String(50), nullable=False)
+    facility_name = db.Column(db.String(50), nullable=False)
+    area_name = db.Column(db.String(50), nullable=False)
+    number_of_person = db.Column(db.Integer, nullable=False)
+    created_at = db.Column(db.Integer, nullable=False, default=int(time()))
+    updated_at = db.Column(db.Integer, nullable=False, default=int(time()))
+
+    def __init__(self, data):
+        self.facility_id = data["facility_id"]
+        self.area_id = data["beacon_id"]
+        self.area_name = data["area_name"]
+        self.facility_name = data["facility_name"]
+        self.number_of_person = 1
+
+    def __repr__(self):
+        return '<FacilityArea %r>' % self.area_id
+
+
 @app.route('/')
 def connect():
     return render_template("Hello from Flask")
@@ -111,7 +133,7 @@ def handle_beacon(event):
     beacon_info["user_id"] = event.source.user_id
     beacon_info["event_type"] = event.beacon.type
     beacon_info["timestamp"] = event.timestamp
-    beacon_info["area_id"] = event.beacon.hwid
+    beacon_info["beacon_id"] = event.beacon.hwid
     # 施設情報の一覧のjson
     with open("deviceid2facilityid.json", "r", encoding="utf-8")as f:
         data = json.load(f)
@@ -122,11 +144,27 @@ def handle_beacon(event):
         beacon_info["area_id"] = area_id
         beacon_info["area_name"] = data["area"][facility_id][area_id]
     app.logger.info(beacon_info)
-    # ログデータベース
+    # ログデータベースに記録
     beaconLog = BeaconLog(beacon_info)
     db.session.add(beaconLog)
     db.session.commit()
 
+    # Queryでビーコンの人数をカウント
+    Query = FacilityStream.area_id == beacon_info["beacon_id"]
+    user_info = db.session.query(FacilityStream).filter(Query).all()
+    if len(user_info):
+        area_info = user_info[0]
+        app.logger.info("Got area beacon: " + area_info.area_id)
+        if event.beacon.type == "enter":
+            area_info.number_of_person += 1
+        elif event.beacon.type == "leave":
+            area_info.number_of_person -= 1
+        area_info.updated_at = int(time())
+        db.session.commit()
+    else:
+        starem_data = FacilityStream(beacon_info)
+        db.session.add(starem_data)
+        db.session.commit()
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.beacon.type))

@@ -1,1 +1,1 @@
-select * from FacilityBeaconEventLog
+SELECT * FROM FacilityBeaconEventLog
