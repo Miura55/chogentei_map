@@ -3,5 +3,6 @@ flask
 flask-cors
 SQLAlchemy
 Flask-SQLAlchemy
+psycopg2
 line-bot-sdk
 python-dotenv
