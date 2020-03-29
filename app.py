@@ -1,6 +1,6 @@
 # coding: utf-8
 from flask import Flask, request, abort, jsonify
-from flask_cors import CORS 
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from time import time
 import os
@@ -32,7 +32,10 @@ handler = WebhookHandler(CHANNEL_SECRET)
 
 app = Flask(__name__, static_folder='static')
 CORS(app)
+# heroku
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL')
+# local
+# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DB_URL')
 db = SQLAlchemy(app)
 
 
