@@ -141,7 +141,9 @@ def handle_message(event):
 
 @handler.add(FollowEvent)
 def handle_follow(event):
-    message = '友だち追加ありがとうございます！このbotで施設の混み具合をチェックして感染対策していきましょう'
+    message = "{}{}".format(
+        '友だち追加ありがとうございます！このbotで施設の混み具合をチェックして感染対策していきましょう！',
+        '\n※このアカウントはハッカソン用のプロトタイプなので、実際の挙動とは異なります')
     line_bot_api.reply_message(
         event.reply_token,
         [
