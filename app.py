@@ -24,18 +24,18 @@ from linebot.models import (
 from dotenv import load_dotenv
 load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
 
-
+# LINE APIの設定
 CHANNEL_ACCESS_TOKEN = os.environ.get('CHANNEL_ACCESS_TOKEN')
 CHANNEL_SECRET = os.environ.get('CHANNEL_SECRET')
 line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
+# アプリケーションの設定
 app = Flask(__name__, static_folder='static')
 CORS(app)
-# heroku
+
+# データベースの設定
 app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL')
-# local
-# app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DB_URL')
 db = SQLAlchemy(app)
 
 
@@ -177,7 +177,7 @@ def handle_beacon(event):
     db.session.add(beaconLog)
     db.session.commit()
 
-    # Queryでビーコンの人数をカウント
+    # Queryでビーコンの人数をカウント(leaveイベントのときはカウントを引く)
     Query = FacilityStream.area_id == beacon_info["beacon_id"]
     user_info = db.session.query(FacilityStream).filter(Query).all()
     if len(user_info):
@@ -190,6 +190,7 @@ def handle_beacon(event):
         area_info.updated_at = int(time())
         db.session.commit()
     else:
+        # エリア情報がないときは追加
         starem_data = FacilityStream(beacon_info)
         db.session.add(starem_data)
         db.session.commit()
