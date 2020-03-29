@@ -166,7 +166,7 @@ def handle_beacon(event):
         facility_id = data[event.beacon.hwid]["FacilityId"]
         area_id = data[event.beacon.hwid]["AreaId"]
         beacon_info["facility_id"] = facility_id
-        beacon_info["facility_name"] = data["facility"][facility_id]
+        beacon_info["facility_name"] = data["facility"][facility_id-1]
         beacon_info["area_id"] = area_id
         beacon_info["area_name"] = data["area"][facility_id][area_id]
     app.logger.info(beacon_info)
