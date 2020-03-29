@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import Flask, request, abort, render_template
+from flask import Flask, request, abort, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from time import time
 import os
@@ -80,7 +80,28 @@ class FacilityStream(db.Model):
 
 @app.route('/')
 def connect():
-    return render_template("Hello from Flask")
+    return "Hello from Flask"
+
+
+# 施設の込具合を取得するAPI
+@app.route("/api/facility")
+def get_facility():
+    facility_id = request.args.get('facility_id')
+    Query = FacilityStream.facility_id == facility_id
+    facility_info = db.session.query(FacilityStream).filter(Query).all()
+    response = {
+        "values": []
+    }
+    for data_line in facility_info:
+        response["values"].append({
+            "facility_id": data_line.facility_id,
+            "area_id": data_line.area_id,
+            "facility_name": data_line.facility_name,
+            "area_name": data_line.area_name,
+            "number_of_person": data_line.number_of_person
+        })
+    app.logger.info(response)
+    return jsonify(response)
 
 
 @app.route("/callback", methods=['POST'])

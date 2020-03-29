@@ -6,7 +6,7 @@
         {
             "database": "${workspaceFolder}\\db/sample.db",
             "dialect": "SQLite",
-            "name": "localtest"
+            "name": "localtestconnect"
         }
     ],
     "sqltools.useNodeRuntime": true
