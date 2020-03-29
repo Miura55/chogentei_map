@@ -166,14 +166,14 @@ def handle_beacon(event):
         facility_id = data[event.beacon.hwid]["FacilityId"]
         area_id = data[event.beacon.hwid]["AreaId"]
         beacon_info["facility_id"] = facility_id
-        beacon_info["facility_name"] = data["facility"][facility_id-1]
+        beacon_info["facility_name"] = data["facility"][facility_id]
         beacon_info["area_id"] = area_id
         beacon_info["area_name"] = data["area"][facility_id][area_id]
     app.logger.info(beacon_info)
     # ログデータベースに記録
-    beaconLog = BeaconLog(beacon_info)
-    db.session.add(beaconLog)
-    db.session.commit()
+    # beaconLog = BeaconLog(beacon_info)
+    # db.session.add(beaconLog)
+    # db.session.commit()
 
     # Queryでビーコンの人数をカウント
     Query = FacilityStream.area_id == beacon_info["beacon_id"]
