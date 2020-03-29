@@ -1,5 +1,6 @@
 # coding: utf-8
 from flask import Flask, request, abort, jsonify
+from flask_cors import CORS 
 from flask_sqlalchemy import SQLAlchemy
 from time import time
 import os
@@ -30,7 +31,8 @@ line_bot_api = LineBotApi(CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(CHANNEL_SECRET)
 
 app = Flask(__name__, static_folder='static')
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DB_URL')
+CORS(app)
+app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get('DATABASE_URL')
 db = SQLAlchemy(app)
 
 

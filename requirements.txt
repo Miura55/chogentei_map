@@ -1,3 +1,7 @@
+gunicorn
 flask
+flask-cors
+SQLAlchemy
+Flask-SQLAlchemy
 line-bot-sdk
 python-dotenv
