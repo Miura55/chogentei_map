@@ -40,25 +40,27 @@ db = SQLAlchemy(app)
 
 
 class BeaconLog(db.Model):
-    __tablename__ = 'FacilityBeaconEventLog'
+    __tablename__ = 'BeaconEventLog'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.String(255), nullable=False)
     timestamp = db.Column(db.Integer, nullable=False, default=int(time()))
     facility_id = db.Column(db.Integer, nullable=False)
     area_id = db.Column(db.Integer, nullable=False)
-    facility_name = db.Column(db.String(50), nullable=False)
-    area_name = db.Column(db.String(50), nullable=False)
-    event_type = db.Column(db.String(10), nullable=False)
+    facility_name = db.Column(db.String(100), nullable=False)
+    area_name = db.Column(db.String(100), nullable=False)
+    event_type = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.Integer, nullable=False, default=int(time()))
 
     def __init__(self, data):
         self.user_id = data["user_id"]
-        self.timestamp = data["timestamp"]
         self.facility_id = data["facility_id"]
         self.facility_name = data["facility_name"]
         self.area_id = data["area_id"]
         self.area_name = data["area_name"]
         self.event_type = data["event_type"]
+
+    def __repr__(self):
+        return '<BeaconLog %r>' % self.user_id
 
 
 class FacilityStream(db.Model):
@@ -171,9 +173,9 @@ def handle_beacon(event):
         beacon_info["area_name"] = data["area"][facility_id][area_id]
     app.logger.info(beacon_info)
     # ログデータベースに記録
-    # beaconLog = BeaconLog(beacon_info)
-    # db.session.add(beaconLog)
-    # db.session.commit()
+    beaconLog = BeaconLog(beacon_info)
+    db.session.add(beaconLog)
+    db.session.commit()
 
     # Queryでビーコンの人数をカウント
     Query = FacilityStream.area_id == beacon_info["beacon_id"]
