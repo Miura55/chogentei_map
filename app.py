@@ -90,7 +90,7 @@ def connect():
     return "Hello from Flask"
 
 
-# 施設の込具合を取得するAPI
+# 施設の混み具合を取得するAPI
 @app.route("/api/facility")
 def get_facility():
     facility_id = request.args.get('facility_id')
@@ -196,6 +196,7 @@ def handle_beacon(event):
         starem_data = FacilityStream(beacon_info)
         db.session.add(starem_data)
         db.session.commit()
+    # デバッグ用にメッセージを送信（ビーコンのイベントタイプを送信する）
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.beacon.type))
